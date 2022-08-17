@@ -1,3 +1,4 @@
+const { ObjectId } = require('bson');
 const express = require('express');
 const { connectToDb, getDb } = require('./database/db')
 
@@ -36,3 +37,14 @@ app.get('/books', (req, res) => {
             res.status(500).json( {error: 'could not fetch data'})
         })
 });
+
+app.get('/books/:id', (req, res) => {
+    if (ObjectId.isValid(req.params.id)) {
+        db.collection('books')
+        .findOne({_id: ObjectId(req.params.id)})
+        .then(doc => {res.status(200).json(doc)}).
+        catch(error => {res.status(500).json({msg: 'could not get data'})})
+    } else {
+        res.status(500).json({ error: "Not valid ID"})
+    }
+})
