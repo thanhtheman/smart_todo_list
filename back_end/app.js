@@ -25,11 +25,19 @@ connectToDb((error) => {
 //routes
 
 app.get('/books', (req, res) => {
+    //pagination
+    const page = req.query.p || 0;
+    const booksPerPage = 3
+    
+    
+    
     let books =[]
     // "find" returns a cursor (not a whole collection like Mongo Compass) that points to our items on the database - toArray or forEach
     db.collection('books')
         .find()
         .sort({ author: 1 })
+        .skip(page * booksPerPage)
+        .limit(booksPerPage)
         .forEach( book => books.push(book) )
         .then(() => {
             res.status(200).json(books)
@@ -53,7 +61,7 @@ app.get('/books/:id', (req, res) => {
 app.post('/books', (req, res) => {
     const book = req.body
     db.collection('books')
-        .insertOne(book)
+        .insertMany(book)
         .then(result => {
             res.status(201).json(result)
         })
@@ -85,4 +93,4 @@ app.patch('/books/:id', (req, res) => {
     } else {
         res.status(500).json({ error: "Not valid ID"})
     }
-})
+});
