@@ -7,7 +7,7 @@ app.listen(3001, () => {
     console.log('App is listening on port 3001');
 });
 
-//routes handler
+//routes handler for front end
 app.get('/books', (req, res) => {
     res.json({ 'msg': 'Welcome to the API!'});
 });
