@@ -48,7 +48,7 @@ app.get('/books/:id', (req, res) => {
     } else {
         res.status(500).json({ error: "Not valid ID"})
     }
-})
+});
 
 app.post('/books', (req, res) => {
     const book = req.body
@@ -60,4 +60,29 @@ app.post('/books', (req, res) => {
         .catch(error => {
             res.status(500).json({ error: 'Could not create a document'})
         })  
+});
+
+app.delete('/books/:id', (req, res) => {
+    if (ObjectId.isValid(req.params.id)) {
+        db.collection('books')
+        .deleteOne({_id: ObjectId(req.params.id)})
+        .then(result => {res.status(200).json(result)}).
+        catch(error => {res.status(500).json({msg: 'could not delete data'})})
+    } else {
+        res.status(500).json({ error: "Not valid ID"})
+    }
+});
+
+app.patch('/books/:id', (req, res) => {
+    const update = req.body;
+
+    if (ObjectId.isValid(req.params.id)) {
+        db.collection('books')
+        .updateOne({_id: ObjectId(req.params.id)}, 
+        {$set: update})
+        .then(result => {res.status(200).json(result)})
+        .catch(error => {res.status(500).json({msg: 'could not update data'})})
+    } else {
+        res.status(500).json({ error: "Not valid ID"})
+    }
 })
